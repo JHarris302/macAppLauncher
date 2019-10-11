@@ -7,69 +7,28 @@ launchApp(){
      
 }
 
-openFile(){
-    open $1 -a "Visual Studio Code" 
-}
-
 main(){
-    
-    if [ $1 = "chrome" ]
-    then
-        launchApp "Google Chrome" "https://google.com"
-    elif [ $1 = "vscode" ]
-    then
-        launchApp "Visual Studio Code" $2
-    fi
+
+if [ $1 = "list" ]
+then
+    cat software.txt
+else
+    while read -r line
+    do
+        tag="$(cut -d',' -f1 <<<$line)"
+
+        if [ $1 = $tag ]
+        then
+            app="$(cut -d',' -f2 <<<$line)"
+            appName="$(tr '.' ' ' <<<$app)"
+
+            launchApp "$appName" $2
+        fi
+
+        
+    done <software.txt
+fi
 }
 
 
-
-jojo(){
-    # $(cut -d',' -f1 software.txt)
-    
-# for var in $(cat software.txt)
-# do
-#     subs="$(cut -d',' -f1 <<<$var)"
-#     app="$(cut -d',' -f2 <<<$var)"
-#     appName="$(tr '.' ' ' <<<$app)"
-#     if [ $1=$subs ]
-#     then
-#         # launchApp "$appName" $2
-#         echo $subs 
-#     fi
-# done
-
-while read -r line
-do
-    tag="$(cut -d',' -f1 <<<$line)"
-
-    if [ $1 = $tag ]
-    then
-        app="$(cut -d',' -f2 <<<$line)"
-        appName="$(tr '.' ' ' <<<$app)"
-
-        launchApp "$appName" $2
-    fi
-
-    
-done <software.txt
-
-}
-jojo $@
-
-# checkForOptions(){
-#     while getopts "f:a:" opt; do
-#   case ${opt} in
-#     f)
-#       openFile $OPTARG
-#       ;;
-#     a)
-#       openApp $OPTARG
-#       ;;
-#     *)
-#         echo 'not recod'
-#         ;;
-#   esac
-# done
-# }
-# 
+main $@
